@@ -1,0 +1,27 @@
+{
+  "name": "OskarD/json-api-model",
+  "type": "library",
+  "description": "JSON API model library",
+  "homepage": "https://github.com/OskarD/json-api-model",
+  "keywords": ["json", "api", "json-api", "model"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Oskar Danielsson",
+      "email": "oskar.danielsson@hotmail.com",
+      "homepage": "http://oskard.me"
+    }
+  ],
+  "require": {
+    "php": ">=5.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0",
+    "art4/json-api-client": "^0.6.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "OskarD\\JsonApiModel\\": "src"
+    }
+  }
+}
