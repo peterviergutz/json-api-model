@@ -10,6 +10,46 @@ use OskarD\JsonApiModel\Factories\ApiModelFactory;
 
 class ApiModelTest extends \PHPUnit_Framework_TestCase
 {
+    public function testSingle()
+    {
+        $resource = '{
+          "links": {
+            "self": "http://example.com/articles/1"
+          },
+          "data": {
+            "type": "articles",
+            "id": "1",
+            "attributes": {
+              "title": "JSON API paints my bikeshed!"
+            },
+            "relationships": {
+              "author": {
+                "links": {
+                  "related": "http://example.com/articles/1/author"
+                }
+              }
+            }
+          }
+        }';
+
+        $document = Helper::parse($resource);
+
+        $apiModelFactory = new ApiModelFactory($document);
+        $apiModelFactory->setMappedTypes([
+            'articles' => Article::class,
+        ]);
+
+        $result = $apiModelFactory->build();
+
+        /** @var Article $article */
+        $article1 = $result[0];
+
+        $this->assertInstanceOf(Article::class, $article1,
+            "The object is not an Article");
+
+        $this->assertEquals(1, $article1->id);
+        $this->assertEquals("JSON API paints my bikeshed!", $article1->title);
+    }
 
     public function testCollection()
     {
