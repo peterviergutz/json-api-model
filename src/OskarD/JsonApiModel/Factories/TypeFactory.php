@@ -1,8 +1,8 @@
 <?php
 
-namespace App\ApiModel\Factories;
+namespace OskarD\JsonApiModel\Factories;
 
-use App\ApiModel\ApiModel;
+use OskarD\JsonApiModel\ApiModel;
 
 interface TypeFactory
 {

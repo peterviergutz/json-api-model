@@ -1,8 +1,7 @@
 <?php
 
-namespace App\ApiModel\Exceptions;
+namespace OskarD\JsonApiModel\Exceptions;
 
 class TypeMapperException extends \Exception
 {
-    
 }
