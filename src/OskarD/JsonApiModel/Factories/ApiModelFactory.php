@@ -15,21 +15,11 @@ use OskarD\JsonApiModel\TypeMapper;
 
 class ApiModelFactory
 {
-    /**
-     * The namespace where your models/classes can be found.
-     *
-     * @var string
-     */
+    /** @var string */
     protected $defaultNamespace = '';
 
-    /**
-     * Types that have their own factories.
-     *
-     * @var array
-     */
-    protected $typeFactories = [
-        // 'foo' => Bar\FooFactory::class,
-    ];
+    /** @var array */
+    protected $typeFactories = [];
 
     /** @var Document */
     protected $document;
@@ -258,6 +248,8 @@ class ApiModelFactory
      * Sets the types that have their own factories.
      * * Key = Type name.
      * * Value = Factory classpath.
+     *
+     * Example: ['foo' => Bar\FooFactory::class]
      *
      * @param array $typeFactories
      */
