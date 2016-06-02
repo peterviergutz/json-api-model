@@ -2,10 +2,11 @@
 
 namespace OskarD\JsonApiModel\Factories;
 
-use Art4\JsonApiClient\AccessInterface;
 use Art4\JsonApiClient\Document;
 use Art4\JsonApiClient\DocumentInterface;
+use Art4\JsonApiClient\ElementInterface;
 use Art4\JsonApiClient\Resource\CollectionInterface;
+use Art4\JsonApiClient\Resource\IdentifierCollectionInterface;
 use Art4\JsonApiClient\Resource\Item;
 use Art4\JsonApiClient\Utils\DataContainer;
 use OskarD\JsonApiModel\ApiModel;
@@ -54,18 +55,18 @@ class ApiModelFactory
     {
         $this->parseIncludedCollection();
 
-        return $this->buildResource($this->document);
+        return $this->buildResource($this->document->get('data'));
     }
 
     /**
-     * Builds an <code>ApiModel</code> from an <code>AccessInterface</code>.
+     * Builds an <code>ApiModel</code> from an <code>ElementInterface</code>.
      *
-     * @param \Art4\JsonApiClient\AccessInterface $resource
+     * @param \Art4\JsonApiClient\ElementInterface $resource
      * @return array|\OskarD\JsonApiModel\ApiModel
      */
-    protected function buildResource(AccessInterface $resource)
+    protected function buildResource(ElementInterface $resource)
     {
-        if ($this->isCollection($resource->get('data'))) {
+        if ($this->isCollection($resource)) {
             return $this->buildFromCollection($resource);
         }
 
@@ -91,7 +92,8 @@ class ApiModelFactory
      */
     protected function isCollection($resource)
     {
-        return is_a($resource, CollectionInterface::class);
+        return is_a($resource, CollectionInterface::class) || is_a($resource,
+            IdentifierCollectionInterface::class);
     }
 
     /**
@@ -107,17 +109,17 @@ class ApiModelFactory
     }
 
     /**
-     * Builds objects from an <code>AccessInterface</code> <code>Collection</code>.
+     * Builds objects from an <code>ElementInterface</code> <code>Collection</code>.
      *
-     * @param \Art4\JsonApiClient\AccessInterface $collection
+     * @param \Art4\JsonApiClient\ElementInterface $collection
      * @return array
      */
-    protected function buildFromCollection(AccessInterface $collection)
+    protected function buildFromCollection(ElementInterface $collection)
     {
         $items = [];
 
-        /** @var AccessInterface $collectionData */
-        $collectionData = $collection->get('data');
+        /** @var ElementInterface $collectionData */
+        $collectionData = $collection;
 
         foreach ($collectionData->asArray() as $item) {
             $items[] = $this->buildFromItem($item);
@@ -339,25 +341,28 @@ class ApiModelFactory
         }
 
         foreach ($item->get('relationships')->asArray() as $relationship) {
-            /** @var AccessInterface $relationship */
-            $relationshipContainer = $relationship->get('data');
+            /** @var ElementInterface $relationship */
 
-            if ($this->isCollection($relationshipContainer)) {
-                /** @var DataContainer $relationshipContainer */
-                $relationshipContainer = $relationshipContainer->asArray();
-            } else {
-                $relationshipContainer = [$relationshipContainer];
-            }
+            if ($relationship->has('data')) { // TODO: Relationship can contain only links
+                $relationshipContainer = $relationship->get('data');
 
-            foreach ($relationshipContainer as $relationshipNode) {
-                /** @var AccessInterface $relationshipNode */
-                $typeName = $relationshipNode->get('type');
+                if ($this->isCollection($relationshipContainer)) {
+                    /** @var DataContainer $relationshipContainer */
+                    $relationshipContainer = $relationshipContainer->asArray();
+                } else {
+                    $relationshipContainer = [$relationshipContainer];
+                }
 
-                $className = $this->getClassName($typeName);
+                foreach ($relationshipContainer as $relationshipNode) {
+                    /** @var ElementInterface $relationshipNode */
+                    $typeName = $relationshipNode->get('type');
 
-                $properties = ['id' => $relationshipNode->get('id')];
+                    $className = $this->getClassName($typeName);
 
-                $relationships[] = new $className($properties);
+                    $properties = ['id' => $relationshipNode->get('id')];
+
+                    $relationships[] = new $className($properties);
+                }
             }
         }
 
