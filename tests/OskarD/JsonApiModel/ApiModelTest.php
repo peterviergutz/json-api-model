@@ -262,10 +262,10 @@ class ApiModelTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $article1->id);
         $this->assertEquals("JSON API paints my bikeshed!", $article1->title);
 
-        $this->assertCount(3, $article1->getRelations(),
+        $this->assertCount(3, $article1->getRelationships(),
             "The object does not contain its relations");
 
-        $relations = $article1->getRelations();
+        $relations = $article1->getRelationships();
         $this->assertInstanceOf(Person::class, $relations[0]);
         $this->assertInstanceOf(Comment::class, $relations[1]);
         $this->assertInstanceOf(Comment::class, $relations[2]);
@@ -281,10 +281,10 @@ class ApiModelTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, $article2->id);
         $this->assertEquals("Rails is Omakase", $article2->title);
 
-        $this->assertCount(3, $article2->getRelations(),
+        $this->assertCount(3, $article2->getRelationships(),
             "The object does not contain its relations");
 
-        $relations = $article2->getRelations();
+        $relations = $article2->getRelationships();
         $this->assertInstanceOf(Person::class, $relations[0]);
         $this->assertInstanceOf(Comment::class, $relations[1]);
         $this->assertInstanceOf(Comment::class, $relations[2]);

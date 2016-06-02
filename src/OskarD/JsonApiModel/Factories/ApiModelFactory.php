@@ -9,16 +9,21 @@ use Art4\JsonApiClient\Resource\CollectionInterface;
 use Art4\JsonApiClient\Resource\IdentifierCollectionInterface;
 use Art4\JsonApiClient\Resource\Item;
 use Art4\JsonApiClient\Utils\DataContainer;
-use OskarD\JsonApiModel\ApiModel;
+use OskarD\JsonApiModel\ApiModelInterface;
 use OskarD\JsonApiModel\Exceptions\ApiModelBuilderException;
 use OskarD\JsonApiModel\TypeMapper;
 
 class ApiModelFactory
 {
     /**
+     * The namespace where your models/classes can be found.
+     *
+     * @var string
+     */
+    protected $defaultNamespace = '';
+
+    /**
      * Types that have their own factories.
-     * * Key = Type name
-     * * Value = Factory classpath
      *
      * @var array
      */
@@ -49,7 +54,7 @@ class ApiModelFactory
      * Builds a set of <code>ApiModel</code>s from the
      * <code>DocumentInterface</code>.
      *
-     * @return array|\OskarD\JsonApiModel\ApiModel
+     * @return array|\OskarD\JsonApiModel\ApiModelInterface
      */
     public function build()
     {
@@ -62,7 +67,7 @@ class ApiModelFactory
      * Builds an <code>ApiModel</code> from an <code>ElementInterface</code>.
      *
      * @param \Art4\JsonApiClient\ElementInterface $resource
-     * @return array|\OskarD\JsonApiModel\ApiModel
+     * @return array|\OskarD\JsonApiModel\ApiModelInterface
      */
     protected function buildResource(ElementInterface $resource)
     {
@@ -132,7 +137,7 @@ class ApiModelFactory
      * Builds an object from a non-<code>Collection</code> <code>Document</code>.
      *
      * @param \Art4\JsonApiClient\Resource\Item $item
-     * @return \Art4\JsonApiClient\Resource\ItemInterface|\OskarD\JsonApiModel\ApiModel
+     * @return \OskarD\JsonApiModel\ApiModelInterface
      * @throws \OskarD\JsonApiModel\Exceptions\ApiModelBuilderException
      */
     protected function buildFromItem(Item $item)
@@ -166,7 +171,7 @@ class ApiModelFactory
      * Builds an <code>ApiModel</code> from an <code>Item</code>.
      *
      * @param \Art4\JsonApiClient\Resource\Item $item
-     * @return \OskarD\JsonApiModel\ApiModel
+     * @return \OskarD\JsonApiModel\ApiModelInterface
      * @throws \OskarD\JsonApiModel\Exceptions\ApiModelBuilderException
      */
     protected function buildItem(Item $item)
@@ -175,11 +180,11 @@ class ApiModelFactory
 
         $object = $this->buildApiModel($item->get('type'), $itemAttributes);
 
-        if (! is_a($object, ApiModel::class)) {
+        if (! is_a($object, ApiModelInterface::class)) {
             throw new ApiModelBuilderException("Tried to build an object from a class that does not extend ApiModel");
         }
 
-        $object->setRelations($this->extractRelationships($item));
+        $object->setRelationships($this->extractRelationships($item));
 
         return $object;
     }
@@ -189,7 +194,7 @@ class ApiModelFactory
      *
      * @param string $typeName
      * @param array  $itemAttributes
-     * @return \OskarD\JsonApiModel\ApiModel
+     * @return \OskarD\JsonApiModel\ApiModelInterface
      */
     protected function buildApiModel($typeName, array $itemAttributes)
     {
@@ -215,7 +220,27 @@ class ApiModelFactory
             return $this->getTypeMapper()->getMappedClass($typeName);
         }
 
-        return ApiModel::getDefaultNamespace() . $typeName;
+        return $this->getDefaultNamespace() . $typeName;
+    }
+
+    /**
+     * Gets the default namespace.
+     *
+     * @return string
+     */
+    public function getDefaultNamespace()
+    {
+        return $this->defaultNamespace;
+    }
+
+    /**
+     * Sets the default namespace.
+     *
+     * @param $namespace
+     */
+    public function setDefaultNamespace($namespace)
+    {
+        $this->defaultNamespace = $namespace;
     }
 
     /**
@@ -231,6 +256,8 @@ class ApiModelFactory
 
     /**
      * Sets the types that have their own factories.
+     * * Key = Type name.
+     * * Value = Factory classpath.
      *
      * @param array $typeFactories
      */
@@ -289,7 +316,7 @@ class ApiModelFactory
      *
      * @param string $typeName
      * @param array  $itemAttributes
-     * @return \OskarD\JsonApiModel\ApiModel
+     * @return \OskarD\JsonApiModel\ApiModelInterface
      */
     protected function buildWithFactory($typeName, array $itemAttributes)
     {
@@ -304,11 +331,11 @@ class ApiModelFactory
     /**
      * Adds attributes to the relations of an <code>ApiModel</code>.
      *
-     * @param \OskarD\JsonApiModel\ApiModel $object
+     * @param \OskarD\JsonApiModel\ApiModelInterface $object
      */
-    protected function completeRelations(ApiModel $object)
+    protected function completeRelations(ApiModelInterface $object)
     {
-        $relations = $object->getRelations();
+        $relations = $object->getRelationships();
 
         for ($i = 0; $i < count($relations); $i++) {
             $relationClass = get_class($relations[$i]);
@@ -323,7 +350,7 @@ class ApiModelFactory
             }
         }
 
-        $object->setRelations($relations);
+        $object->setRelationships($relations);
     }
 
     /**

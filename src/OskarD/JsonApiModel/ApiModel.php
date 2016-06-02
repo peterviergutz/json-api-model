@@ -2,23 +2,15 @@
 
 namespace OskarD\JsonApiModel;
 
-use ArrayAccess;
-
-abstract class ApiModel implements ArrayAccess
+abstract class ApiModel implements ApiModelInterface
 {
-    /**
-     * The namespace where your models/classes can be found.
-     *
-     * @var string
-     */
-    protected static $defaultNamespace = '';
 
     /**
-     * Relations associated with this resource.
+     * Relationships associated with this resource.
      *
      * @var array
      */
-    protected $relations = [];
+    protected $relationships = [];
 
     /**
      * Gets any relationships assigned to the resource. If a classpath is passed to
@@ -27,13 +19,13 @@ abstract class ApiModel implements ArrayAccess
      * @param string $class
      * @return array
      */
-    public function getRelations($class = null)
+    public function getRelationships($class = null)
     {
         if (is_null($class)) {
-            return $this->relations;
+            return $this->relationships;
         }
 
-        return array_filter($this->relations,
+        return array_filter($this->relationships,
             function ($relationship) use ($class) {
                 if (is_a($relationship, $class)) {
                     return true;
@@ -44,21 +36,13 @@ abstract class ApiModel implements ArrayAccess
     }
 
     /**
-     * @param array $relations
+     * Sets the relationships associated with the resource.
+     * 
+     * @param array $relationships
      */
-    public function setRelations(array $relations)
+    public function setRelationships(array $relationships)
     {
-        $this->relations = $relations;
-    }
-
-    /**
-     * Gets the default namespace.
-     *
-     * @return string
-     */
-    public static function getDefaultNamespace()
-    {
-        return static::$defaultNamespace;
+        $this->relationships = $relationships;
     }
 
     /**
@@ -171,7 +155,7 @@ abstract class ApiModel implements ArrayAccess
      */
     public function __unset($key)
     {
-        unset($this->attributes[$key], $this->relations[$key]);
+        unset($this->attributes[$key], $this->relationships[$key]);
     }
 
 }
