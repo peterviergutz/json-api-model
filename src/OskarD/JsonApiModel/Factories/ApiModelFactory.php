@@ -179,7 +179,7 @@ class ApiModelFactory
             throw new ApiModelBuilderException("Tried to build an object from a class that does not extend ApiModel");
         }
 
-        $object->setRelations($this->extractRelationships($item));
+        $object->setRelationships($this->extractRelationships($item));
 
         return $object;
     }
@@ -308,7 +308,7 @@ class ApiModelFactory
      */
     protected function completeRelations(ApiModel $object)
     {
-        $relations = $object->getRelations();
+        $relations = $object->getRelationships();
 
         for ($i = 0; $i < count($relations); $i++) {
             $relationClass = get_class($relations[$i]);
@@ -323,7 +323,7 @@ class ApiModelFactory
             }
         }
 
-        $object->setRelations($relations);
+        $object->setRelationships($relations);
     }
 
     /**
