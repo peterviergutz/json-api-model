@@ -10,6 +10,27 @@ use OskarD\JsonApiModel\Factories\ApiModelFactory;
 
 class ApiModelTest extends \PHPUnit_Framework_TestCase
 {
+    public function testEmpty()
+    {
+        $resource = '{
+          "links": {
+            "self": "http://example.com/articles"
+          },
+          "data": []
+        }';
+
+        $document = Helper::parse($resource);
+
+        $apiModelFactory = new ApiModelFactory($document);
+        $apiModelFactory->setMappedTypes([
+            'articles' => Article::class,
+        ]);
+
+        $result = $apiModelFactory->build();
+
+        $this->assertEmpty($result, "The returned result is not empty");
+    }
+
     public function testSingle()
     {
         $resource = '{
