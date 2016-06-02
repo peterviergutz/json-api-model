@@ -8,6 +8,7 @@ use Art4\JsonApiClient\ElementInterface;
 use Art4\JsonApiClient\Resource\CollectionInterface;
 use Art4\JsonApiClient\Resource\IdentifierCollectionInterface;
 use Art4\JsonApiClient\Resource\Item;
+use Art4\JsonApiClient\Resource\ResourceInterface;
 use Art4\JsonApiClient\Utils\DataContainer;
 use OskarD\JsonApiModel\ApiModelInterface;
 use OskarD\JsonApiModel\Exceptions\ApiModelBuilderException;
@@ -64,14 +65,15 @@ class ApiModelFactory
     }
 
     /**
-     * Builds an <code>ApiModel</code> from an <code>ElementInterface</code>.
+     * Builds an <code>ApiModel</code> from a <code>ResourceInterface</code>.
      *
-     * @param \Art4\JsonApiClient\ElementInterface $resource
-     * @return array|\OskarD\JsonApiModel\ApiModelInterface
+     * @param \Art4\JsonApiClient\Resource\ResourceInterface $resource
+     * @return array
      */
-    protected function buildResource(ElementInterface $resource)
+    protected function buildResource(ResourceInterface $resource)
     {
-        if ($this->isCollection($resource)) {
+        if ($resource->isCollection()) {
+            /** @var CollectionInterface $resource */
             return $this->buildFromCollection($resource);
         }
 
@@ -116,10 +118,10 @@ class ApiModelFactory
     /**
      * Builds objects from an <code>ElementInterface</code> <code>Collection</code>.
      *
-     * @param \Art4\JsonApiClient\ElementInterface $collection
+     * @param \Art4\JsonApiClient\Resource\CollectionInterface $collection
      * @return array
      */
-    protected function buildFromCollection(ElementInterface $collection)
+    protected function buildFromCollection(CollectionInterface $collection)
     {
         $items = [];
 
