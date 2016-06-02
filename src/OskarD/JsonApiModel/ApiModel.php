@@ -2,16 +2,8 @@
 
 namespace OskarD\JsonApiModel;
 
-use ArrayAccess;
-
-abstract class ApiModel implements ArrayAccess
+abstract class ApiModel implements ApiModelInterface
 {
-    /**
-     * The namespace where your models/classes can be found.
-     *
-     * @var string
-     */
-    protected static $defaultNamespace = '';
 
     /**
      * Relationships associated with this resource.
@@ -44,21 +36,13 @@ abstract class ApiModel implements ArrayAccess
     }
 
     /**
+     * Sets the relationships associated with the resource.
+     * 
      * @param array $relationships
      */
     public function setRelationships(array $relationships)
     {
         $this->relationships = $relationships;
-    }
-
-    /**
-     * Gets the default namespace.
-     *
-     * @return string
-     */
-    public static function getDefaultNamespace()
-    {
-        return static::$defaultNamespace;
     }
 
     /**
