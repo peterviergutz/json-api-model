@@ -9,6 +9,60 @@ Create classes that extend `ApiModel` that will be represent the remote resource
 
 You can also use `ApiModelInterface` to make your own `ApiModel` variants.
 
+### Type Factories
+You can add your own factories for specific `type`s.
+
+This is useful, for instance, when you want to implement inheritance in your class structure. Let's say you have a `CreditCard` class and a `DebitCard` class that both extend the `Card` class, but the API returns the same type with different attributes.
+```
+{
+   "id": 1
+   "type": "card",
+   "attributes": {
+        "cardtype": "credit"
+   }
+}
+
+..
+
+{
+   "id": 2
+   "type": "card",
+   "attributes": {
+        "cardtype": "debit"
+   }
+}
+```
+
+You can then extend `OskarD\JsonApiModel\Factories\TypeFactory` and make your own `CardFactory` class.
+```
+namespace MyApp\TypeFactories;
+
+use OskarD\JsonApiModel\Factories\TypeFactory;
+
+class CardFactory
+{
+    /**
+     * Builds an instance of the type.
+     *
+     * @param $attributes
+     * @return ApiModel
+     */
+    public function build($attributes)
+    {
+        if($attributes['cardtype'] == 'credit') {
+            return new CreditCard($attributes);
+        }
+        
+        return new DebitCard($attributes);
+    }
+}
+```
+You also have to set the factory in the ApiModelFactory context.
+```
+$apiModelFactory->setTypeFactories([
+    'card' => MyApp\TypeFactories\CardFactory::class,
+]);
+```
 ## Usage
 ### Create The Factory
 Create the ApiModelFactory by passing the document returned from JsonApiClient's `parse` function (`$document`).
