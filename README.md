@@ -77,7 +77,7 @@ $apiModelFactory = new ApiModelFactory($document);
 ```
 
 ### Namespacing (Optional)
-If your `ApiModelInterface` classes exist outside the current namespace, you have to need to provide them. You can do this in three  ways: by setting the default namespace, by mapping them individually, or by mixing both of them at once.
+If your `ApiModelInterface` classes exist outside the root namespace, you need to provide them. You can do this by setting the default namespace, by mapping them individually, or both.
 
 #### Set Default Namespace
 If most or all of your `ApiModelInterface` classes exist in the same namespace, you can avoid mapping them by setting the default namespace for the factory to theirs.
