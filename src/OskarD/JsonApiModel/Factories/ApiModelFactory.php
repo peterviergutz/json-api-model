@@ -375,6 +375,10 @@ class ApiModelFactory
                 }
 
                 foreach ($relationshipContainer as $relationshipNode) {
+
+                    // catch empty relations
+                    if(empty($relationshipNode)) continue;
+
                     /** @var ElementInterface $relationshipNode */
                     $typeName = $relationshipNode->get('type');
 
