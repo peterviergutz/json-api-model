@@ -1,15 +1,14 @@
 {
-  "name": "oskar/json-api-model",
+  "name": "peterviergutz/json-api-model",
   "type": "library",
   "description": "JSON API model library",
-  "homepage": "https://github.com/OskarD/json-api-model",
+  "homepage": "https://github.com/peterviergutz/json-api-model",
   "keywords": ["json", "api", "json-api", "model"],
   "license": "MIT",
   "authors": [
     {
-      "name": "Oskar Danielsson",
-      "email": "oskar.danielsson@hotmail.com",
-      "homepage": "http://oskard.me"
+      "name": "Peter Viergutz",
+      "email": "viergutz@gmail.com"
     }
   ],
   "require": {
